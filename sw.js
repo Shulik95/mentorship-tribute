@@ -2,7 +2,7 @@
    SERVICE WORKER FOR OFFLINE SUPPORT
    ======================================== */
 
-const CACHE_NAME = 'mentorship-testimonials-v1.5.0';
+const CACHE_NAME = 'mentorship-testimonials-v1.6.0';
 const STATIC_CACHE_URLS = [
     './',
     './index.html',

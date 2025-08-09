@@ -305,9 +305,20 @@ function renderParticipantCards() {
         grid.innerHTML = '';
         
         // Get current testimonials data based on view mode
-        const currentData = window.IntegrationSystem ? 
-            window.IntegrationSystem.getCurrentTestimonialsData() : 
-            participantsData;
+        let currentData;
+        try {
+            currentData = window.IntegrationSystem ? 
+                window.IntegrationSystem.getCurrentTestimonialsData() : 
+                participantsData;
+            
+            // Fallback if data is empty or undefined
+            if (!currentData || !Array.isArray(currentData) || currentData.length === 0) {
+                currentData = participantsData || [];
+            }
+        } catch (error) {
+            console.warn('Error loading testimonials data, using fallback:', error);
+            currentData = participantsData || [];
+        }
         
         // Render actual cards with staggered animation
         currentData.forEach((participant, index) => {

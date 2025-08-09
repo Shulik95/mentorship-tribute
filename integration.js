@@ -174,8 +174,9 @@ function getCurrentTestimonialsData() {
         if (currentViewMode === 'general') {
             // Return English data if available
             const englishData = window.participantsData;
-            if (!englishData || !Array.isArray(englishData)) {
-                throw new Error(IntegrationErrors.DATA_LOADING_FAILED);
+            if (!englishData || !Array.isArray(englishData) || englishData.length === 0) {
+                console.warn('English testimonials data not available, using fallback');
+                return [];
             }
             return englishData;
         }
@@ -183,18 +184,21 @@ function getCurrentTestimonialsData() {
         // Return Hebrew data
         const HebrewSystem = window.HebrewSystem;
         if (!HebrewSystem) {
-            throw new Error(IntegrationErrors.HEBREW_SYSTEM_NOT_LOADED);
+            console.warn('Hebrew system not loaded, falling back to English data');
+            return window.participantsData || [];
         }
         
         const hebrewData = HebrewSystem.getHebrewTestimonials();
-        if (!hebrewData || !Array.isArray(hebrewData)) {
-            throw new Error(IntegrationErrors.DATA_LOADING_FAILED);
+        if (!hebrewData || !Array.isArray(hebrewData) || hebrewData.length === 0) {
+            console.warn('Hebrew testimonials data not available, falling back to English data');
+            return window.participantsData || [];
         }
         
         return hebrewData;
         
     } catch (error) {
-        return handleIntegrationError(error.message, window.participantsData || []);
+        console.warn('Error in getCurrentTestimonialsData:', error.message);
+        return window.participantsData || [];
     }
 }
 
