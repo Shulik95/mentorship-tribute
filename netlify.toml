@@ -1,0 +1,92 @@
+# Netlify deployment configuration
+[build]
+  # Build directory (if you have a build process)
+  publish = "."
+  
+  # Build command (optional - we're using static files)
+  command = "echo 'Static site - no build needed'"
+
+# Production context settings
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+# Branch context settings
+[context.branch-deploy]
+  command = "echo 'Branch deploy - no build needed'"
+
+# Deploy preview context
+[context.deploy-preview]
+  command = "echo 'Deploy preview - no build needed'"
+
+# Custom headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    
+    # Performance headers
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Service Worker specific headers
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# HTML files - shorter cache for updates
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, s-maxage=31536000"
+
+# CSS and JS files - long cache with versioning
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Manifest file
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Font files
+[[headers]]
+  for = "/*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirects and rewrites
+[[redirects]]
+  from = "/admin"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = false
+
+# Fallback for SPA routing (if needed)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Edge functions (if needed for dynamic content)
+[[edge_functions]]
+  function = "hello"
+  path = "/api/*"
+
+# Environment variables (set in Netlify dashboard)
+# SITE_URL = production URL
+# CONTACT_EMAIL = contact email for the program

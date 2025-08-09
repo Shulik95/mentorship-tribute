@@ -1,0 +1,71 @@
+{
+  "name": "Mentorship Program Testimonials",
+  "short_name": "Mentorship Testimonials",
+  "description": "Stories of growth and transformation from our mentorship program participants",
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "lang": "en",
+  "dir": "auto",
+  "categories": ["education", "business", "productivity"],
+  "icons": [
+    {
+      "src": "./icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "./screenshot-narrow.png",
+      "sizes": "640x1136",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "View Manager Testimonials",
+      "short_name": "Manager View",
+      "description": "View testimonials from manager perspective",
+      "url": "./#manager",
+      "icons": [
+        {
+          "src": "./icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "View Guide Testimonials",
+      "short_name": "Guide View",
+      "description": "View testimonials from guide perspective",
+      "url": "./#guide",
+      "icons": [
+        {
+          "src": "./icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": ""
+}
