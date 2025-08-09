@@ -178,7 +178,7 @@ const hebrewTestimonialsData = [
     },
     {
         id: 8,
-        name: 'סודי 2',
+        name: 'אביחי חן',
         image: 'images/participants/8.jpg',
         generalTestimonial: `התוכנית בשבילי הייתה עצירה. לחשוב, להתבונן, להבין. מי אני, מה אני עושה, ולמה.`,
         guideText: `צביקה אגדה, יודע להוביל קהל כמו שלוקה דונציץ מוביל כדור, חכם, מכיל ורגיש.`,
