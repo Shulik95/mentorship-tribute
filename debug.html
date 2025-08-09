@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Testimonials</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>GitHub Pages Debug Page</h1>
+    
+    <div class="debug">
+        <h3>Page Load Status</h3>
+        <p id="page-status">✅ HTML loaded successfully</p>
+    </div>
+
+    <div class="debug">
+        <h3>CSS Status</h3>
+        <p id="css-status">Checking...</p>
+    </div>
+
+    <div class="debug">
+        <h3>JavaScript Status</h3>
+        <p id="js-status">Checking...</p>
+    </div>
+
+    <div class="debug">
+        <h3>File Paths</h3>
+        <p>Current URL: <span id="current-url"></span></p>
+        <p>Base URL: <span id="base-url"></span></p>
+    </div>
+
+    <div class="debug">
+        <h3>Error Log</h3>
+        <div id="error-log"></div>
+    </div>
+
+    <div class="debug">
+        <h3>Test Links</h3>
+        <a href="./index.html">Go to Main Site</a><br>
+        <a href="./styles.css" target="_blank">Test CSS File</a><br>
+        <a href="./script.js" target="_blank">Test JavaScript File</a><br>
+        <a href="./hebrew-system.js" target="_blank">Test Hebrew System</a>
+    </div>
+
+    <script>
+        // Track all errors
+        const errorLog = document.getElementById('error-log');
+        
+        window.addEventListener('error', function(e) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `❌ ${e.message}<br>File: ${e.filename}<br>Line: ${e.lineno}`;
+            errorLog.appendChild(errorDiv);
+        });
+
+        // Display current URLs
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('base-url').textContent = window.location.origin + window.location.pathname.replace('/debug.html', '/');
+
+        // Test CSS loading
+        const testCSS = () => {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = './styles.css';
+            link.onload = () => {
+                document.getElementById('css-status').innerHTML = '✅ CSS loaded successfully';
+                document.getElementById('css-status').className = 'success';
+            };
+            link.onerror = () => {
+                document.getElementById('css-status').innerHTML = '❌ CSS failed to load';
+                document.getElementById('css-status').className = 'error';
+            };
+            document.head.appendChild(link);
+        };
+
+        // Test JavaScript loading
+        const testJS = () => {
+            const script = document.createElement('script');
+            script.src = './script.js';
+            script.onload = () => {
+                document.getElementById('js-status').innerHTML = '✅ JavaScript loaded successfully';
+                document.getElementById('js-status').className = 'success';
+            };
+            script.onerror = () => {
+                document.getElementById('js-status').innerHTML = '❌ JavaScript failed to load';
+                document.getElementById('js-status').className = 'error';
+            };
+            document.head.appendChild(script);
+        };
+
+        testCSS();
+        testJS();
+
+        console.log('Debug page loaded');
+        console.log('Current location:', window.location);
+    </script>
+</body>
+</html>
