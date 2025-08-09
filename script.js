@@ -92,6 +92,7 @@ const participantsData = [
         name: "Sarah Chen",
         role: "Software Engineer",
         initials: "SC",
+        image: "images/participants/1.jpg", // Optional: will fallback to initials if not found
         preview: "The mentorship program transformed my approach to problem-solving and gave me the confidence to lead technical projects. The guidance I received was invaluable.",
         fullTestimonial: "Before joining the mentorship program, I felt overwhelmed by the technical challenges in my role. My mentor helped me break down complex problems into manageable pieces and taught me frameworks for systematic thinking. Now I'm leading a team of five engineers and have been promoted twice since completing the program.",
     },
@@ -100,6 +101,7 @@ const participantsData = [
         name: "Marcus Rodriguez",
         role: "Product Manager",
         initials: "MR",
+        image: "images/participants/2.jpg",
         preview: "Through this program, I learned to balance stakeholder needs while maintaining a clear product vision. The mentorship was a game-changer for my career.",
         fullTestimonial: "The mentorship program came at a crucial point in my career transition from engineering to product management. My mentor helped me understand the nuances of stakeholder management and strategic thinking. I've since launched three successful products and built strong relationships across all departments.",
     },
@@ -108,6 +110,7 @@ const participantsData = [
         name: "Aisha Patel",
         role: "UX Designer",
         initials: "AP",
+        image: "images/participants/3.jpg",
         preview: "My mentor helped me develop a user-centered mindset that goes beyond aesthetics. I now approach design challenges with confidence and systematic thinking.",
         fullTestimonial: "Coming from a graphic design background, I struggled with user research and data-driven design decisions. My mentor introduced me to design thinking methodologies and helped me build empathy for users. My designs now consistently test better with users and I've become the go-to person for complex UX challenges.",
     },
@@ -116,6 +119,7 @@ const participantsData = [
         name: "David Kim",
         role: "Data Scientist",
         initials: "DK",
+        image: "images/participants/4.jpg",
         preview: "The program taught me how to communicate complex data insights to non-technical stakeholders. This skill has been crucial for my career advancement.",
         fullTestimonial: "As a data scientist, I was great with numbers but struggled to make my insights actionable for business teams. My mentor taught me storytelling techniques and helped me understand business context. I now regularly present to C-level executives and my recommendations drive key business decisions.",
     },
@@ -124,6 +128,7 @@ const participantsData = [
         name: "Emily Johnson",
         role: "Marketing Lead",
         initials: "EJ",
+        image: "images/participants/5.jpg",
         preview: "Through mentorship, I learned to think strategically about campaigns and measure impact effectively. The guidance helped me grow into a leadership role.",
         fullTestimonial: "I was managing individual campaigns without seeing the bigger picture. My mentor helped me understand customer journey mapping and cross-channel strategy. I've since increased our marketing ROI by 150% and been promoted to lead a team of eight marketers across three verticals.",
     },
@@ -132,6 +137,7 @@ const participantsData = [
         name: "James Thompson",
         role: "Sales Director",
         initials: "JT",
+        image: "images/participants/6.jpg",
         preview: "The mentorship program helped me transition from individual contributor to team leader. I learned valuable skills in coaching and team development.",
         fullTestimonial: "Making the jump from top salesperson to sales manager was challenging. My mentor, a seasoned sales leader, taught me how to coach rather than just lead by example. I learned to identify each team member's strengths and development areas. My team now consistently exceeds quota and has the lowest turnover in the company.",
     },
@@ -140,6 +146,7 @@ const participantsData = [
         name: "Priya Sharma",
         role: "DevOps Engineer",
         initials: "PS",
+        image: "images/participants/7.jpg",
         preview: "My mentor taught me to think beyond just tools and processes. I now focus on building systems that truly serve development teams and business needs.",
         fullTestimonial: "I was caught up in the latest DevOps tools without understanding their business impact. My mentor helped me step back and think about developer experience and business outcomes. I've since designed a deployment pipeline that reduced our time-to-market by 60% and improved developer satisfaction scores.",
     },
@@ -148,6 +155,7 @@ const participantsData = [
         name: "Alex Chen",
         role: "Business Analyst",
         initials: "AC",
+        image: "images/participants/8.jpg",
         preview: "Through this program, I learned to ask the right questions and present findings that drive action. The mentorship elevated my analytical thinking.",
         fullTestimonial: "My analysis was always technically correct but didn't always lead to clear business decisions. My mentor taught me to start with business questions rather than data, and to frame insights in terms of recommendations and next steps. I'm now trusted to lead strategic initiatives and my analysis directly influences product roadmaps.",
     }
@@ -156,6 +164,74 @@ const participantsData = [
 /* ========================================
    DOM MANIPULATION FUNCTIONS
    ======================================== */
+
+/**
+ * Handles image loading errors by falling back to initials
+ * @param {HTMLImageElement} img - The failed image element
+ */
+function handleImageError(img) {
+    const container = img.parentElement;
+    if (container && container.hasAttribute('data-fallback-initials')) {
+        const initials = container.getAttribute('data-fallback-initials');
+        const gradient = container.getAttribute('data-fallback-gradient');
+        
+        // Replace image with initials fallback
+        container.className = 'participant-card__image';
+        container.style.background = gradient;
+        container.innerHTML = initials;
+        
+        console.log('Image failed to load, using initials fallback:', initials);
+    }
+}
+
+/**
+ * Handles modal image loading errors by falling back to initials
+ * @param {HTMLImageElement} img - The failed image element
+ */
+function handleModalImageError(img) {
+    const container = img.parentElement;
+    if (container && container.hasAttribute('data-fallback-initials')) {
+        const initials = container.getAttribute('data-fallback-initials');
+        const gradient = container.getAttribute('data-fallback-gradient');
+        
+        // Replace image with initials fallback
+        container.className = 'modal__participant-image';
+        container.style.background = gradient;
+        container.innerHTML = initials;
+        
+        console.log('Modal image failed to load, using initials fallback:', initials);
+    }
+}
+
+/**
+ * Creates image container with fallback to initials
+ * @param {Object} participant - Participant data object  
+ * @param {Object} participantInfo - Processed participant info (name, initials, role)
+ * @param {Object} colors - Gradient colors for fallback
+ * @returns {string} - HTML string for image container
+ */
+function createImageContainer(participant, participantInfo, colors) {
+    // Check if participant has an image defined
+    if (participant.image) {
+        return `
+            <div class="participant-card__image participant-card__image--photo" 
+                 data-fallback-initials="${participantInfo.initials}"
+                 data-fallback-gradient="${colors.gradient}">
+                <img src="${participant.image}" 
+                     alt="${participantInfo.name}"
+                     loading="lazy"
+                     onerror="handleImageError(this)">
+            </div>
+        `;
+    } else {
+        // Fallback to initials if no image is defined
+        return `
+            <div class="participant-card__image" style="background: ${colors.gradient}">
+                ${participantInfo.initials}
+            </div>
+        `;
+    }
+}
 
 /**
  * Creates a participant card element with enhanced styling
@@ -182,13 +258,14 @@ function createParticipantCard(participant, index = 0) {
         window.IntegrationSystem.getCardPreviewText(participant) : 
         participant.preview;
     
-    // Generate gradient colors based on initials
+    // Generate gradient colors based on initials (for fallback)
     const colors = generateGradientColors(participantInfo.initials);
     
+    // Create image container with fallback to initials
+    const imageContainer = createImageContainer(participant, participantInfo, colors);
+    
     card.innerHTML = `
-        <div class="participant-card__image" style="background: ${colors.gradient}">
-            ${participantInfo.initials}
-        </div>
+        ${imageContainer}
         <h3 class="participant-card__name">${participantInfo.name}</h3>
         <p class="participant-card__preview">${previewText}</p>
         <div class="participant-card__click-indicator">→</div>
@@ -612,8 +689,28 @@ function populateModalContent(participant) {
         // Populate participant image
         const image = document.querySelector('.modal__participant-image');
         if (image) {
-            image.style.background = colors.gradient;
-            image.textContent = participantInfo.initials;
+            // Clear any existing content
+            image.innerHTML = '';
+            image.className = 'modal__participant-image';
+            
+            if (participant.image) {
+                // Use photo if available
+                image.classList.add('modal__participant-image--photo');
+                image.setAttribute('data-fallback-initials', participantInfo.initials);
+                image.setAttribute('data-fallback-gradient', colors.gradient);
+                
+                const img = document.createElement('img');
+                img.src = participant.image;
+                img.alt = participantInfo.name;
+                img.loading = 'lazy';
+                img.onerror = () => handleModalImageError(img);
+                
+                image.appendChild(img);
+            } else {
+                // Fallback to initials
+                image.style.background = colors.gradient;
+                image.textContent = participantInfo.initials;
+            }
         }
         
         // Populate participant info

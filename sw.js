@@ -2,7 +2,7 @@
    SERVICE WORKER FOR OFFLINE SUPPORT
    ======================================== */
 
-const CACHE_NAME = 'mentorship-testimonials-v1.6.0';
+const CACHE_NAME = 'mentorship-testimonials-v1.7.0';
 const STATIC_CACHE_URLS = [
     './',
     './index.html',
@@ -12,6 +12,9 @@ const STATIC_CACHE_URLS = [
     './integration.js',
     './manifest.json'
 ];
+
+// Images will be cached dynamically when loaded
+const PARTICIPANT_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
 
 const FONT_CACHE_URLS = [
     'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap',
@@ -66,8 +69,15 @@ self.addEventListener('activate', event => {
             .then(cacheNames => {
                 return Promise.all(
                     cacheNames.map(cacheName => {
+                        // Keep current caches
+                        const validCaches = [
+                            CACHE_NAME,
+                            CACHE_NAME + '-fonts', 
+                            CACHE_NAME + '-images'
+                        ];
+                        
                         // Delete old caches
-                        if (cacheName !== CACHE_NAME && cacheName !== CACHE_NAME + '-fonts') {
+                        if (!validCaches.includes(cacheName)) {
                             console.log('Deleting old cache:', cacheName);
                             return caches.delete(cacheName);
                         }
@@ -112,11 +122,25 @@ self.addEventListener('fetch', event => {
                         // Clone the response before caching
                         const responseToCache = response.clone();
                         
-                        // Cache the fetched resource
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
+                        // Determine cache strategy based on resource type
+                        const url = event.request.url;
+                        const isParticipantImage = url.includes('/images/participants/') && 
+                            PARTICIPANT_IMAGE_EXTENSIONS.some(ext => url.toLowerCase().includes(ext));
+                        
+                        if (isParticipantImage) {
+                            // Cache participant images with longer TTL
+                            caches.open(CACHE_NAME + '-images')
+                                .then(cache => {
+                                    cache.put(event.request, responseToCache);
+                                    console.log('Caching participant image:', url);
+                                });
+                        } else {
+                            // Cache other resources normally
+                            caches.open(CACHE_NAME)
+                                .then(cache => {
+                                    cache.put(event.request, responseToCache);
+                                });
+                        }
                         
                         console.log('Serving from network and caching:', event.request.url);
                         return response;
