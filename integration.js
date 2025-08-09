@@ -123,6 +123,9 @@ function updateUIForViewMode() {
     // Update page title
     document.title = isHebrew ? hebrewTexts.title || 'מערכת ההכרה של תוכנית ההדרכה' : 'Mentorship Program Tribute | Transforming Careers';
     
+    // Update page header visibility and title
+    updatePageHeader();
+    
     // Define text updates (minimal for production)
     const textUpdates = [
         // No UI text updates needed for production - only testimonial content
@@ -140,6 +143,32 @@ function updateUIForViewMode() {
     
     // Update view mode indicator
     updateViewModeIndicator();
+}
+
+/**
+ * Updates page header visibility and title based on view mode
+ */
+function updatePageHeader() {
+    const header = document.getElementById('page-header');
+    const headerTitle = document.getElementById('page-header-title');
+    
+    if (!header || !headerTitle) return;
+    
+    if (currentViewMode === 'manager' || currentViewMode === 'guide') {
+        // Show header for manager/guide views
+        header.style.display = 'block';
+        header.setAttribute('aria-hidden', 'false');
+        
+        // Set header title
+        headerTitle.textContent = 'תוכנית מנטורינג ע״ש רועי נגרי - מחזור ב׳';
+        
+        console.log(`Header shown for ${currentViewMode} view`);
+    } else {
+        // Hide header for general view
+        header.style.display = 'none';
+        header.setAttribute('aria-hidden', 'true');
+        console.log('Header hidden for general view');
+    }
 }
 
 /**

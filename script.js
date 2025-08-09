@@ -352,9 +352,10 @@ function setupCardInteractions(card, participant) {
         const touchDuration = Date.now() - touchStartTime;
         card.style.transform = '';
         
-        // Prevent double-tap zoom on mobile
+        // Handle touch as click if it's a quick tap
         if (touchDuration < 300) {
-            e.preventDefault();
+            e.preventDefault(); // Still prevent double-tap zoom
+            handleCardClick(participant); // Directly call the handler
         }
     });
 }
