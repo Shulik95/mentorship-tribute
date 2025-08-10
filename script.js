@@ -340,20 +340,32 @@ function setupCardInteractions(card, participant) {
         card.style.setProperty('--hover-scale', '1');
     });
     
-    // Touch interactions for mobile
+    // Touch interactions for mobile with movement detection
     let touchStartTime = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const MOVEMENT_THRESHOLD = 10; // pixels - movement tolerance for tap detection
     
     card.addEventListener('touchstart', (e) => {
         touchStartTime = Date.now();
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
         card.style.transform = 'scale(0.98)';
     });
     
     card.addEventListener('touchend', (e) => {
         const touchDuration = Date.now() - touchStartTime;
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        
+        // Calculate movement distance
+        const moveX = Math.abs(touchEndX - touchStartX);
+        const moveY = Math.abs(touchEndY - touchStartY);
+        
         card.style.transform = '';
         
-        // Handle touch as click if it's a quick tap
-        if (touchDuration < 300) {
+        // Only trigger if quick tap with minimal movement (not a scroll)
+        if (touchDuration < 200 && moveX < MOVEMENT_THRESHOLD && moveY < MOVEMENT_THRESHOLD) {
             e.preventDefault(); // Still prevent double-tap zoom
             handleCardClick(participant); // Directly call the handler
         }
