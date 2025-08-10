@@ -7,31 +7,8 @@
  * Handles URL-based role detection and content switching
  */
 
-// Error handling and graceful degradation
-const IntegrationErrors = {
-    HEBREW_SYSTEM_NOT_LOADED: 'Hebrew system not loaded',
-    INVALID_VIEW_MODE: 'Invalid view mode',
-    DOM_ELEMENT_NOT_FOUND: 'Required DOM element not found',
-    DATA_LOADING_FAILED: 'Failed to load testimonial data'
-};
-
 function handleIntegrationError(error, fallback = null) {
     console.error('Integration Error:', error);
-    
-    // Track errors for debugging
-    if (window.performanceMetrics) {
-        window.performanceMetrics.errors.push({
-            type: 'integration',
-            message: error,
-            timestamp: Date.now()
-        });
-    }
-    
-    // Announce error to screen readers
-    if (window.announceToScreenReader) {
-        window.announceToScreenReader('Content loading failed, using fallback', 'assertive');
-    }
-    
     return fallback;
 }
 
@@ -62,12 +39,21 @@ function initIntegration() {
 
 /**
  * Detects current view mode from URL hash
+ * Defaults to 'manager' if no hash is present
  */
 function detectViewMode() {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#manager' || hash === '#ron') return 'manager';
     if (hash === '#guide' || hash === '#tzvika' || hash === '#צביקה') return 'guide';
-    return 'general';
+    
+    // Default to manager view instead of general to avoid showing fake English data
+    if (!hash || hash === '#' || hash === '#general') {
+        // Redirect to manager view and update URL
+        window.location.hash = '#manager';
+        return 'manager';
+    }
+    
+    return 'manager'; // Fallback to manager
 }
 
 /**
@@ -180,19 +166,19 @@ function updateViewModeIndicator() {
 }
 
 /**
- * Updates view mode switcher buttons
+ * Updates view mode switcher buttons (development only)
  */
 function updateViewSwitcher() {
-    const buttons = document.querySelectorAll('.view-mode-switcher button');
-    buttons.forEach(button => {
-        button.classList.remove('active');
-        const mode = button.getAttribute('data-mode') || 
-                    (button.textContent.includes('English') ? 'general' :
-                     button.textContent.includes('Manager') ? 'manager' : 'guide');
-        if (mode === currentViewMode) {
-            button.classList.add('active');
-        }
-    });
+    if (process.env.NODE_ENV === 'development') {
+        const buttons = document.querySelectorAll('.view-mode-switcher button');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+            const mode = button.getAttribute('data-mode') || 'manager';
+            if (mode === currentViewMode) {
+                button.classList.add('active');
+            }
+        });
+    }
 }
 
 /**
